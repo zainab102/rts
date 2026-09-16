@@ -1,4 +1,5 @@
 import { BeforeAfter } from "@/components/before-after";
+import { Photo } from "@/components/photo";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -276,8 +277,7 @@ export default function FoundersPage() {
             </ul>
           </div>
           <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/office/after-blue.png"
               alt="Rising Tech Solutions founders lounge after restyle"
               className="h-full w-full object-cover"
