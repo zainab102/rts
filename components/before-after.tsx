@@ -1,4 +1,4 @@
-use client";
+"use client";
 
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { photoSrc } from "@/lib/photos";
