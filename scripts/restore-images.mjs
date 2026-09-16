@@ -11,7 +11,7 @@ async function walk(dir) {
         continue;
       }
       files.push(...(await walk(path)));
-    } else if (/\.b64(\.\d+)?$/.test(entry.name)) {
+    } else if (/\.b64(\.\d+)?$/.test(entry.name) && !entry.name.includes("favicon")) {
       files.push(path);
     }
   }
