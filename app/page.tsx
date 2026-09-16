@@ -1,3 +1,4 @@
+import { Photo } from "@/components/photo";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,8 +47,7 @@ export default function Home() {
             href="/sales"
             className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/sales/after-blue.png"
               alt="Sales cabin after restyle"
               className="aspect-[4/3] w-full object-cover"
@@ -69,8 +69,7 @@ export default function Home() {
             href="/kitchen"
             className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/kitchen/after-sink.png"
               alt="Kitchen after restyle"
               className="aspect-[4/3] w-full object-cover"
@@ -92,8 +91,7 @@ export default function Home() {
             href="/hall"
             className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/hall/after-lounge.png"
               alt="Main hall after restyle"
               className="aspect-[4/3] w-full object-cover"
@@ -117,8 +115,7 @@ export default function Home() {
             href="/founders"
             className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/office/after-blue.png"
               alt="Founders office after restyle"
               className="aspect-[4/3] w-full object-cover"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useId, useRef, useState } from "react";
+import { photoSrc } from "@/lib/photos";
 
 type BeforeAfterProps = {
   beforeSrc: string;
@@ -54,7 +55,7 @@ export function BeforeAfter({
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={afterSrc}
+          src={photoSrc(afterSrc)}
           alt={afterAlt}
           className="absolute inset-0 h-full w-full object-cover"
           draggable={false}
@@ -68,7 +69,7 @@ export function BeforeAfter({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={beforeSrc}
+            src={photoSrc(beforeSrc)}
             alt={beforeAlt}
             className="absolute inset-0 h-full w-full object-cover"
             draggable={false}
