@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "restore-images": "node scripts/restore-images.mjs",
-    "postinstall": "node scripts/restore-images.mjs",
     "dev": "next dev --hostname 127.0.0.1 --port 43127",
     "build": "next build",
     "start": "next start",

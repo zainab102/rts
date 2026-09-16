@@ -15,7 +15,7 @@ Open [http://127.0.0.1:43127](http://127.0.0.1:43127).
 
 ## Deploy
 
-Import this GitHub repository into Vercel (or Netlify). Use the Next.js defaults: `npm install` then `npm run build`. Photo files are stored as `.b64` sidecars and restored during `postinstall`, so a clone from GitHub is enough to build.
+Import this GitHub repository into Vercel. Use the Next.js defaults: `npm install` then `npm run build`. Before/after photos are bundled with the app.
 
 ## Rooms
 
