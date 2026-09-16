@@ -7,11 +7,15 @@ async function walk(dir) {
   for (const entry of entries) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === "node_modules" || entry.name === ".git" || entry.name === ".next") {
+      if (
+        entry.name === "node_modules" ||
+        entry.name === ".git" ||
+        entry.name === ".next"
+      ) {
         continue;
       }
       files.push(...(await walk(path)));
-    } else if (/\.b64(\.\d+)?$/.test(entry.name) && !entry.name.includes("favicon")) {
+    } else if (/\.b64(\.\d+)?$/.test(entry.name)) {
       files.push(path);
     }
   }
@@ -22,8 +26,9 @@ function destPath(b64Path) {
   return b64Path.replace(/\.b64(?:\.\d+)?$/, "");
 }
 
-const files = await walk(process.cwd());
+const files = await walk(join(process.cwd(), "public"));
 if (files.length === 0) {
+  console.log("no photo sidecars found");
   process.exit(0);
 }
 
