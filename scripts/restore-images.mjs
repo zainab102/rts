@@ -1,5 +1,5 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -11,11 +11,15 @@ async function walk(dir) {
         continue;
       }
       files.push(...(await walk(path)));
-    } else if (entry.name.endsWith(".b64")) {
+    } else if (/\.b64(\.\d+)?$/.test(entry.name)) {
       files.push(path);
     }
   }
   return files;
+}
+
+function destPath(b64Path) {
+  return b64Path.replace(/\.b64(?:\.\d+)?$/, "");
 }
 
 const files = await walk(process.cwd());
@@ -23,9 +27,22 @@ if (files.length === 0) {
   process.exit(0);
 }
 
-for (const b64Path of files) {
-  const dest = b64Path.slice(0, -4);
-  const encoded = (await readFile(b64Path, "utf8")).replace(/\s+/g, "");
+const groups = new Map();
+for (const path of files) {
+  const dest = destPath(path);
+  const list = groups.get(dest) ?? [];
+  list.push(path);
+  groups.set(dest, list);
+}
+
+for (const [dest, parts] of groups) {
+  parts.sort();
+  const encoded = (
+    await Promise.all(parts.map((part) => readFile(part, "utf8")))
+  )
+    .join("")
+    .replace(/\s+/g, "");
+  await mkdir(dirname(dest), { recursive: true });
   await writeFile(dest, Buffer.from(encoded, "base64"));
   console.log(`restored ${dest}`);
 }
