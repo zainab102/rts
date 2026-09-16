@@ -1,4 +1,5 @@
 import { BeforeAfter } from "@/components/before-after";
+import { Photo } from "@/components/photo";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -101,6 +102,7 @@ export default function KitchenPage() {
             {kitchenAngles.map((angle) => (
               <TabsContent key={angle.id} value={angle.id} className="space-y-3">
                 <BeforeAfter
+                  key={angle.id}
                   beforeSrc={angle.before}
                   afterSrc={angle.after}
                   beforeAlt={`${angle.label} as it is today`}
@@ -274,8 +276,7 @@ export default function KitchenPage() {
             </ul>
           </div>
           <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/kitchen/after-sink.png"
               alt="Rising Tech Solutions pantry sink after restyle"
               className="h-full w-full object-cover"

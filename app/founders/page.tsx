@@ -102,6 +102,7 @@ export default function FoundersPage() {
             {angles.map((angle) => (
               <TabsContent key={angle.id} value={angle.id} className="space-y-3">
                 <BeforeAfter
+                  key={angle.id}
                   beforeSrc={angle.before}
                   afterSrc={angle.after}
                   beforeAlt={`${angle.label} as it is today`}

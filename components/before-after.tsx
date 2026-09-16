@@ -1,6 +1,6 @@
-"use client";
+use client";
 
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { photoSrc } from "@/lib/photos";
 
 type BeforeAfterProps = {
@@ -26,9 +26,26 @@ export function BeforeAfter({
   const [pos, setPos] = useState(52);
   const [beforeReady, setBeforeReady] = useState(false);
   const [afterReady, setAfterReady] = useState(false);
+  const [frameWidth, setFrameWidth] = useState(0);
   const frame = useRef<HTMLDivElement>(null);
   const labelId = useId();
   const ready = beforeReady && afterReady;
+
+  useEffect(() => {
+    setBeforeReady(false);
+    setAfterReady(false);
+    setPos(52);
+  }, [beforeSrc, afterSrc]);
+
+  useLayoutEffect(() => {
+    const el = frame.current;
+    if (!el) return;
+    const update = () => setFrameWidth(el.clientWidth);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const move = useCallback((clientX: number) => {
     const el = frame.current;
@@ -42,7 +59,7 @@ export function BeforeAfter({
     <div className="space-y-3">
       <div
         ref={frame}
-        className="relative aspect-[4/3] w-full cursor-ew-resize overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-foreground/10"
+        className="relative isolate aspect-[4/3] w-full cursor-ew-resize overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-foreground/10"
         onPointerDown={(event) => {
           if (!ready) return;
           event.currentTarget.setPointerCapture(event.pointerId);
@@ -57,21 +74,22 @@ export function BeforeAfter({
         <img
           src={photoSrc(afterSrc)}
           alt={afterAlt}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover select-none"
           draggable={false}
           decoding="async"
           ref={(image) => markIfComplete(image, setAfterReady)}
           onLoad={() => setAfterReady(true)}
         />
         <div
-          className="absolute inset-0"
-          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+          className="pointer-events-none absolute inset-y-0 left-0 overflow-hidden"
+          style={{ width: `${pos}%` }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={photoSrc(beforeSrc)}
             alt={beforeAlt}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="pointer-events-none absolute inset-y-0 left-0 h-full max-w-none object-cover select-none"
+            style={{ width: frameWidth ? `${frameWidth}px` : "100%" }}
             draggable={false}
             decoding="async"
             ref={(image) => markIfComplete(image, setBeforeReady)}

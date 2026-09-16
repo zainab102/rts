@@ -1,4 +1,5 @@
 import { BeforeAfter } from "@/components/before-after";
+import { Photo } from "@/components/photo";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -102,6 +103,7 @@ export default function HallPage() {
             {hallAngles.map((angle) => (
               <TabsContent key={angle.id} value={angle.id} className="space-y-3">
                 <BeforeAfter
+                  key={angle.id}
                   beforeSrc={angle.before}
                   afterSrc={angle.after}
                   beforeAlt={`${angle.label} as it is today`}
@@ -275,8 +277,7 @@ export default function HallPage() {
             </ul>
           </div>
           <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Photo
               src="/hall/after-lounge.png"
               alt="Rising Tech Solutions main hall after restyle"
               className="h-full w-full object-cover"
