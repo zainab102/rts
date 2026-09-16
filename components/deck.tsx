@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { roomBudgets, type Slide } from "@/lib/presentation";
+import { photoSrc } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
@@ -196,7 +197,7 @@ function SlideBody({ slide }: { slide: Slide }) {
             </p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={slide.before}
+              src={photoSrc(slide.before)}
               alt=""
               className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
             />
@@ -207,7 +208,7 @@ function SlideBody({ slide }: { slide: Slide }) {
             </p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={slide.after}
+              src={photoSrc(slide.after)}
               alt=""
               className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
             />
