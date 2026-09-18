@@ -19,6 +19,7 @@ type DeckProps = {
 
 export function Deck({ slides }: DeckProps) {
   const [index, setIndex] = useState(0);
+  const [printing, setPrinting] = useState(false);
   const last = slides.length - 1;
 
   const go = useCallback(
@@ -45,6 +46,17 @@ export function Deck({ slides }: DeckProps) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go, index, last]);
+
+  useEffect(() => {
+    const start = () => setPrinting(true);
+    const end = () => setPrinting(false);
+    window.addEventListener("beforeprint", start);
+    window.addEventListener("afterprint", end);
+    return () => {
+      window.removeEventListener("beforeprint", start);
+      window.removeEventListener("afterprint", end);
+    };
+  }, []);
 
   const fullscreen = () => {
     const node = document.documentElement;
@@ -93,7 +105,11 @@ export function Deck({ slides }: DeckProps) {
               "print:min-h-[100vh] print:break-after-page print:px-12 print:py-16",
             )}
           >
-            <SlideBody slide={item} />
+            <SlideBody
+              slide={item}
+              load={printing || Math.abs(i - index) <= 1}
+              active={i === index}
+            />
           </article>
         ))}
       </div>
@@ -135,7 +151,15 @@ export function Deck({ slides }: DeckProps) {
   );
 }
 
-function SlideBody({ slide }: { slide: Slide }) {
+function SlideBody({
+  slide,
+  load,
+  active,
+}: {
+  slide: Slide;
+  load: boolean;
+  active: boolean;
+}) {
   if (slide.kind === "title") {
     return (
       <div className="mx-auto flex max-w-5xl flex-1 flex-col justify-center print:text-foreground">
@@ -195,23 +219,36 @@ function SlideBody({ slide }: { slide: Slide }) {
             <p className="mb-2 text-[11px] font-medium tracking-wide text-white/55 uppercase print:text-muted-foreground">
               Now
             </p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={photoSrc(slide.before)}
-              alt=""
-              className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
-            />
+            {load ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={photoSrc(slide.before)}
+                alt=""
+                loading={active ? "eager" : "lazy"}
+                decoding="async"
+                className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
+              />
+            ) : (
+              <div className="h-[min(52vh,420px)] w-full rounded-xl bg-white/10" />
+            )}
           </figure>
           <figure className="min-h-0">
             <p className="mb-2 text-[11px] font-medium tracking-wide text-[#c4b59a] uppercase print:text-primary">
               Proposed
             </p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={photoSrc(slide.after)}
-              alt=""
-              className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
-            />
+            {load ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={photoSrc(slide.after)}
+                alt=""
+                loading={active ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={active ? "high" : undefined}
+                className="h-[min(52vh,420px)] w-full rounded-xl object-cover ring-1 ring-white/10 print:h-auto print:ring-border"
+              />
+            ) : (
+              <div className="h-[min(52vh,420px)] w-full rounded-xl bg-white/10" />
+            )}
           </figure>
         </div>
       </div>
