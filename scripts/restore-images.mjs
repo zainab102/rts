@@ -54,13 +54,25 @@ function isContiguous(parts) {
   return nums.every((n, i) => n === i);
 }
 
-function isValidPhoto(buf) {
-  if (buf.length < 50_000) return false;
-  const jpeg = buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
-  const webp =
+function isJpeg(buf) {
+  return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+}
+
+function isWebp(buf) {
+  return (
     buf.subarray(0, 4).toString("ascii") === "RIFF" &&
-    buf.subarray(8, 12).toString("ascii") === "WEBP";
-  return jpeg || webp;
+    buf.subarray(8, 12).toString("ascii") === "WEBP"
+  );
+}
+
+function isValidPhoto(buf) {
+  return buf.length >= 50_000 && (isJpeg(buf) || isWebp(buf));
+}
+
+function photoScore(buf) {
+  if (!isValidPhoto(buf)) return -1;
+  // Prefer full JPEG over lighter WebP so Vercel can serve image/jpeg.
+  return (isJpeg(buf) ? 1_000_000_000 : 0) + buf.length;
 }
 
 const groups = new Map();
@@ -94,7 +106,7 @@ for (const [dest, parts] of groups) {
     .map((name) => byRoot.get(name))
     .filter(Boolean);
 
-  let wrote = false;
+  const decoded = [];
   for (const candidate of candidates) {
     candidate.sort();
     if (!isContiguous(candidate)) {
@@ -107,15 +119,22 @@ for (const [dest, parts] of groups) {
       .join("")
       .replace(/\s+/g, "");
     const buf = Buffer.from(encoded, "base64");
-    if (!isValidPhoto(buf)) {
+    const score = photoScore(buf);
+    if (score < 0) {
       console.log(`skip invalid ${dest} (${buf.length}B)`);
       continue;
     }
-    await mkdir(dirname(dest), { recursive: true });
-    await writeFile(dest, buf);
-    console.log(`restored ${dest} (${buf.length}B)`);
-    wrote = true;
-    break;
+    decoded.push({ buf, score });
   }
-  if (!wrote) console.log(`missing ${dest}`);
+
+  decoded.sort((a, b) => b.score - a.score);
+  if (decoded.length === 0) {
+    console.log(`missing ${dest}`);
+    continue;
+  }
+
+  const { buf } = decoded[0];
+  await mkdir(dirname(dest), { recursive: true });
+  await writeFile(dest, buf);
+  console.log(`restored ${dest} (${buf.length}B)`);
 }
