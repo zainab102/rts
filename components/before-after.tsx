@@ -29,7 +29,6 @@ export function BeforeAfter({
   const [frameWidth, setFrameWidth] = useState(0);
   const frame = useRef<HTMLDivElement>(null);
   const labelId = useId();
-  const ready = beforeReady && afterReady;
 
   useEffect(() => {
     setBeforeReady(false);
@@ -61,12 +60,11 @@ export function BeforeAfter({
         ref={frame}
         className="relative isolate aspect-[4/3] w-full cursor-ew-resize overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-foreground/10"
         onPointerDown={(event) => {
-          if (!ready) return;
           event.currentTarget.setPointerCapture(event.pointerId);
           move(event.clientX);
         }}
         onPointerMove={(event) => {
-          if (!ready || event.buttons !== 1) return;
+          if (event.buttons !== 1) return;
           move(event.clientX);
         }}
       >
@@ -77,6 +75,8 @@ export function BeforeAfter({
           className="pointer-events-none absolute inset-0 h-full w-full object-cover select-none"
           draggable={false}
           decoding="async"
+          loading="eager"
+          fetchPriority="high"
           ref={(image) => markIfComplete(image, setAfterReady)}
           onLoad={() => setAfterReady(true)}
         />
@@ -89,14 +89,18 @@ export function BeforeAfter({
             src={photoSrc(beforeSrc)}
             alt={beforeAlt}
             className="pointer-events-none absolute inset-y-0 left-0 h-full max-w-none object-cover select-none"
-            style={{ width: frameWidth ? `${frameWidth}px` : "100%" }}
+            style={{
+              width: frameWidth ? `${frameWidth}px` : "100%",
+              opacity: beforeReady ? 1 : 0,
+            }}
             draggable={false}
             decoding="async"
+            loading="eager"
             ref={(image) => markIfComplete(image, setBeforeReady)}
             onLoad={() => setBeforeReady(true)}
           />
         </div>
-        {ready ? (
+        {afterReady ? (
           <>
             <div
               className="absolute inset-y-0 z-10 w-px bg-white"
@@ -122,11 +126,7 @@ export function BeforeAfter({
               After
             </span>
           </>
-        ) : (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-muted text-sm text-muted-foreground">
-            Loading comparison…
-          </div>
-        )}
+        ) : null}
       </div>
       <label className="flex items-center gap-3 text-xs text-muted-foreground">
         <span id={labelId}>Drag to compare</span>
@@ -135,10 +135,9 @@ export function BeforeAfter({
           min={3}
           max={97}
           value={pos}
-          disabled={!ready}
           aria-labelledby={labelId}
           onChange={(event) => setPos(Number(event.target.value))}
-          className="h-1.5 w-full accent-primary disabled:opacity-40"
+          className="h-1.5 w-full accent-primary"
         />
       </label>
     </div>
