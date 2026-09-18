@@ -51,6 +51,8 @@ export default function Home() {
               src="/sales/after-blue.png"
               alt="Sales cabin after restyle"
               className="aspect-[4/3] w-full object-cover"
+              loading="eager"
+              fetchPriority="high"
             />
             <div className="p-5">
               <p className="text-xs font-medium tracking-[0.18em] text-primary uppercase">
@@ -73,6 +75,7 @@ export default function Home() {
               src="/kitchen/after-sink.png"
               alt="Kitchen after restyle"
               className="aspect-[4/3] w-full object-cover"
+              loading="eager"
             />
             <div className="p-5">
               <p className="text-xs font-medium tracking-[0.18em] text-primary uppercase">
