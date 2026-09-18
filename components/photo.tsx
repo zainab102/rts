@@ -5,9 +5,21 @@ type PhotoProps = ImgHTMLAttributes<HTMLImageElement> & {
   src: string;
 };
 
-export function Photo({ src, alt = "", ...props }: PhotoProps) {
+export function Photo({
+  src,
+  alt = "",
+  loading = "lazy",
+  decoding = "async",
+  ...props
+}: PhotoProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={photoSrc(src)} alt={alt} {...props} />
+    <img
+      src={photoSrc(src)}
+      alt={alt}
+      loading={loading}
+      decoding={decoding}
+      {...props}
+    />
   );
 }
