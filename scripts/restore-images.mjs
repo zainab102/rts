@@ -113,11 +113,12 @@ for (const [dest, parts] of groups) {
       console.log(`skip incomplete ${dest}`);
       continue;
     }
-    const encoded = (
+    let encoded = (
       await Promise.all(candidate.map((part) => readFile(part, "utf8")))
     )
       .join("")
       .replace(/\s+/g, "");
+    encoded = encoded.slice(0, encoded.length - (encoded.length % 4));
     const buf = Buffer.from(encoded, "base64");
     const score = photoScore(buf);
     if (score < 0) {
