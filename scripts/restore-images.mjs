@@ -15,7 +15,7 @@ async function walk(dir) {
         continue;
       }
       files.push(...(await walk(path)));
-    } else if (/\.b64(\.\d+)?$/.test(entry.name)) {
+    } else if (/\.b64\.\d+$/.test(entry.name)) {
       files.push(path);
     }
   }
@@ -23,7 +23,7 @@ async function walk(dir) {
 }
 
 function destPath(b64Path) {
-  return b64Path.replace(/\.b64(?:\.\d+)?$/, "");
+  return b64Path.replace(/\.b64\.\d+$/, "");
 }
 
 const files = await walk(join(process.cwd(), "public"));
