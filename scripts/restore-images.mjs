@@ -5,6 +5,48 @@ const root = process.cwd();
 const sidecarRoots = [join(root, "photos"), join(root, "public")];
 const publicRoot = join(root, "public");
 
+/**
+ * Sidecar files may be:
+ * - exact base64 text
+ * - a single https URL to the base64 text
+ * - multiple https URLs (one per line) whose bodies concatenate to the base64 text
+ * - local staging halves next to the sidecar: `<name>.h0` + `<name>.h1` under
+ *   the same directory's `.staging/` folder (used when the sidecar body is
+ *   exactly `STAGING_HALVES`)
+ */
+async function readSidecarText(path) {
+  const raw = (await readFile(path, "utf8")).trim();
+  if (raw === "STAGING_HALVES") {
+    const base = path.split("/").pop();
+    const dir = dirname(path);
+    const h0 = join(dir, ".staging", `${base}.h0`);
+    const h1 = join(dir, ".staging", `${base}.h1`);
+    const a = (await readFile(h0, "utf8")).trim();
+    const b = (await readFile(h1, "utf8")).trim();
+    return a + b;
+  }
+  const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (lines.length > 0 && lines.every((l) => /^https?:\/\//i.test(l))) {
+    const parts = [];
+    for (const url of lines) {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`sidecar fetch failed ${res.status} for ${path}: ${url}`);
+      }
+      parts.push((await res.text()).trim());
+    }
+    return parts.join("");
+  }
+  if (/^https?:\/\//i.test(raw)) {
+    const res = await fetch(raw);
+    if (!res.ok) {
+      throw new Error(`sidecar fetch failed ${res.status} for ${path}: ${raw}`);
+    }
+    return (await res.text()).trim();
+  }
+  return raw;
+}
+
 async function exists(path) {
   try {
     await access(path);
@@ -71,8 +113,7 @@ function isValidPhoto(buf) {
 
 function photoScore(buf) {
   if (!isValidPhoto(buf)) return -1;
-  // Prefer full JPEG over lighter WebP so Vercel can serve image/jpeg.
-  return (isJpeg(buf) ? 1_000_000_000 : 0) + buf.length;
+  return buf.length;
 }
 
 const groups = new Map();
@@ -114,7 +155,7 @@ for (const [dest, parts] of groups) {
       continue;
     }
     let encoded = (
-      await Promise.all(candidate.map((part) => readFile(part, "utf8")))
+      await Promise.all(candidate.map((part) => readSidecarText(part)))
     )
       .join("")
       .replace(/\s+/g, "");
