@@ -5,7 +5,7 @@ const root = process.cwd();
 const sidecarRoots = [join(root, "photos"), join(root, "public")];
 const publicRoot = join(root, "public");
 
-/** Expand compact half encodings such as `REPEAT:A:8000`. */
+/** Expand compact half encodings such as `REPEAT:A:8000`, `LITERAL:...`, or `HEX:...`. */
 function expandSidecarPiece(text) {
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   let out = "";
@@ -18,6 +18,12 @@ function expandSidecarPiece(text) {
     const lit = /^LITERAL:(.*)$/.exec(line);
     if (lit) {
       out += lit[1];
+      continue;
+    }
+    const hex = /^HEX:(.*)$/i.exec(line);
+    if (hex) {
+      // Hex is case-insensitive — guards against MCP/LLM case drift on uploads.
+      out += Buffer.from(hex[1].replace(/\s+/g, ""), "hex").toString("utf8");
       continue;
     }
     out += line;
@@ -40,8 +46,27 @@ async function readSidecarText(path) {
   if (raw === "STAGING_HALVES") {
     const base = path.split("/").pop();
     const dir = dirname(path);
-    const h0 = join(dir, ".staging", `${base}.h0`);
-    const h1 = join(dir, ".staging", `${base}.h1`);
+    const stagingDir = join(dir, ".staging");
+    // Prefer numbered parts `<base>.00`, `<base>.01`, ... (HEX/REPEAT/LITERAL-safe).
+    try {
+      const entries = await readdir(stagingDir);
+      const numbered = entries
+        .filter((n) => n.startsWith(`${base}.`) && /^\d{2}$/.test(n.slice(base.length + 1)))
+        .sort();
+      if (numbered.length > 0) {
+        const parts = [];
+        for (const n of numbered) {
+          parts.push(
+            expandSidecarPiece((await readFile(join(stagingDir, n), "utf8")).trim()),
+          );
+        }
+        return parts.join("");
+      }
+    } catch {
+      // fall through to h0/h1
+    }
+    const h0 = join(stagingDir, `${base}.h0`);
+    const h1 = join(stagingDir, `${base}.h1`);
     const a = expandSidecarPiece((await readFile(h0, "utf8")).trim());
     const b = expandSidecarPiece((await readFile(h1, "utf8")).trim());
     return a + b;
