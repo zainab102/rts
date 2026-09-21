@@ -5,6 +5,26 @@ const root = process.cwd();
 const sidecarRoots = [join(root, "photos"), join(root, "public")];
 const publicRoot = join(root, "public");
 
+/** Expand compact half encodings such as `REPEAT:A:8000`. */
+function expandSidecarPiece(text) {
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  let out = "";
+  for (const line of lines) {
+    const m = /^REPEAT:(.):(\d+)$/.exec(line);
+    if (m) {
+      out += m[1].repeat(Number(m[2]));
+      continue;
+    }
+    const lit = /^LITERAL:(.*)$/.exec(line);
+    if (lit) {
+      out += lit[1];
+      continue;
+    }
+    out += line;
+  }
+  return out || text;
+}
+
 /**
  * Sidecar files may be:
  * - exact base64 text
@@ -13,6 +33,7 @@ const publicRoot = join(root, "public");
  * - local staging halves next to the sidecar: `<name>.h0` + `<name>.h1` under
  *   the same directory's `.staging/` folder (used when the sidecar body is
  *   exactly `STAGING_HALVES`)
+ * Staging half files may use `REPEAT:C:N` / `LITERAL:...` compact lines.
  */
 async function readSidecarText(path) {
   const raw = (await readFile(path, "utf8")).trim();
@@ -21,8 +42,8 @@ async function readSidecarText(path) {
     const dir = dirname(path);
     const h0 = join(dir, ".staging", `${base}.h0`);
     const h1 = join(dir, ".staging", `${base}.h1`);
-    const a = (await readFile(h0, "utf8")).trim();
-    const b = (await readFile(h1, "utf8")).trim();
+    const a = expandSidecarPiece((await readFile(h0, "utf8")).trim());
+    const b = expandSidecarPiece((await readFile(h1, "utf8")).trim());
     return a + b;
   }
   const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
