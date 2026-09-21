@@ -1,15 +1,21 @@
 import type { NextConfig } from "next";
 
-const jpegHeaders = [{ key: "Content-Type", value: "image/jpeg" }];
-const webpHeaders = [{ key: "Content-Type", value: "image/webp" }];
+const cacheControl = {
+  key: "Cache-Control",
+  value: "public, max-age=31536000, immutable",
+};
+const jpegHeaders = [
+  { key: "Content-Type", value: "image/jpeg" },
+  cacheControl,
+];
 
 const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/office/:file", headers: jpegHeaders },
-      { source: "/hall/:file", headers: webpHeaders },
+      { source: "/hall/:file", headers: jpegHeaders },
       { source: "/kitchen/:file", headers: jpegHeaders },
-      { source: "/sales/:file", headers: webpHeaders },
+      { source: "/sales/:file", headers: jpegHeaders },
     ];
   },
 };
