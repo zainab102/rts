@@ -2,7 +2,7 @@ import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 
 const root = process.cwd();
-const sidecarRoots = [join(root, "photos"), join(root, "public")];
+const sidecarRoots = [join(root, "photos")]; // ignore public/ crushed leftovers
 const publicRoot = join(root, "public");
 
 /** Expand compact half encodings such as `REPEAT:A:8000`, `LITERAL:...`, or `HEX:...`. */
