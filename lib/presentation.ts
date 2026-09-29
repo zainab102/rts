@@ -1,18 +1,34 @@
 import { budgetTotal, company } from "@/lib/plan";
+import { entranceBudget } from "@/lib/entrance";
 import { hallBudget } from "@/lib/hall";
 import { kitchenBudget } from "@/lib/kitchen";
 import { salesBudget } from "@/lib/sales";
+import { washroomBudget } from "@/lib/washroom";
 
 export const grandTotal = {
-  min: budgetTotal.min + hallBudget.min + kitchenBudget.min + salesBudget.min,
-  max: budgetTotal.max + hallBudget.max + kitchenBudget.max + salesBudget.max,
+  min:
+    budgetTotal.min +
+    hallBudget.min +
+    kitchenBudget.min +
+    salesBudget.min +
+    washroomBudget.min +
+    entranceBudget.min,
+  max:
+    budgetTotal.max +
+    hallBudget.max +
+    kitchenBudget.max +
+    salesBudget.max +
+    washroomBudget.max +
+    entranceBudget.max,
 };
 
 export const roomBudgets = [
   { name: "Founders office", range: `$${budgetTotal.min}–${budgetTotal.max}`, note: "Guest-facing room" },
   { name: "Main hall", range: `$${hallBudget.min}–${hallBudget.max}`, note: "Day teams + night sales" },
   { name: "Sales cabin", range: `$${salesBudget.min}–${salesBudget.max}`, note: "Call floor" },
-  { name: "Kitchen & washrooms", range: `$${kitchenBudget.min}–${kitchenBudget.max}`, note: "Back of house" },
+  { name: "Kitchen", range: `$${kitchenBudget.min}–${kitchenBudget.max}`, note: "Back of house" },
+  { name: "Washroom", range: `$${washroomBudget.min}–${washroomBudget.max}`, note: "Guest washroom" },
+  { name: "Entrance", range: `$${entranceBudget.min}–${entranceBudget.max}`, note: "Front door" },
 ];
 
 export type Slide =
@@ -134,17 +150,35 @@ export const slides: Slide[] = [
   {
     id: "kitchen",
     kind: "compare",
-    kicker: "4 · Kitchen & washrooms",
+    kicker: "4 · Kitchen",
     title: "Back of house, not leftover storage",
     body: `Same cabinets, fridge, and bathroom doors. Nothing on top of the units. Extinguisher on the wall. About $${kitchenBudget.min}–${kitchenBudget.max}.`,
     before: "/kitchen/before-sink.jpg",
     after: "/kitchen/after-sink.png",
   },
   {
+    id: "washroom",
+    kind: "compare",
+    kicker: "5 · Washroom",
+    title: "Same tiles. No ladder in the doorway.",
+    body: `Keep the vessel sink, LED mirror, and patterned floor. Clear clutter, one soap, soft light. About $${washroomBudget.min}–${washroomBudget.max}.`,
+    before: "/washroom/before-vanity.jpg",
+    after: "/washroom/after-vanity.jpg",
+  },
+  {
+    id: "entrance",
+    kind: "compare",
+    kicker: "6 · Entrance",
+    title: "The walk-up guests see first",
+    body: `Same arched door and Rising Tech Solutions sign. Touch up scuffs, soft light on the logo, polish the hardware. About $${entranceBudget.min}–${entranceBudget.max}.`,
+    before: "/entrance/before-door.jpg",
+    after: "/entrance/after-door.jpg",
+  },
+  {
     id: "budget",
     kind: "budget",
     kicker: "The number",
-    title: `$${grandTotal.min.toLocaleString()}–$${grandTotal.max.toLocaleString()} for all four areas`,
+    title: `$${grandTotal.min.toLocaleString()}–$${grandTotal.max.toLocaleString()} for all six areas`,
     body: "Skip the optional lines (runners, extra LED tape) and you still get the look. No contractor, no downtime from demolition.",
   },
   {
@@ -154,12 +188,12 @@ export const slides: Slide[] = [
     title: "Weekends. No shutdown.",
     points: [
       {
-        heading: "Kitchen — one Saturday",
-        body: "Empty cabinet tops, mount the extinguisher, cable covers, labels. Smallest spend, fastest win.",
+        heading: "Kitchen + washroom — one Saturday",
+        body: "Empty cabinet tops, clear the washroom ladder, mount the extinguisher, stage the vanity.",
       },
       {
-        heading: "Founders office — one weekend",
-        body: "Declutter Friday. Shop Saturday. Rug, pillows, bulbs, vinyl Sunday.",
+        heading: "Entrance + founders — one weekend",
+        body: "Soft logo light and door polish Friday. Founders declutter and rug Saturday–Sunday.",
       },
       {
         heading: "Hall + sales cabin — felt is the long job",
@@ -174,8 +208,8 @@ export const slides: Slide[] = [
     title: "Approve the kit. We do not hire a builder.",
     points: [
       `Cap the whole restyle at $${grandTotal.max.toLocaleString()}.`,
-      "Keep every wall, cubicle separator, cabinet, and desk.",
-      "Start with kitchen + founders (visible, cheap), then felt the two sales floors.",
+      "Keep every wall, cubicle separator, cabinet, door, and desk.",
+      "Start with entrance + washroom + kitchen (visible, cheap), then felt the two sales floors.",
       "Full photo plans and shopping lists are in this same site.",
     ],
   },

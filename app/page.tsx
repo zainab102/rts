@@ -3,9 +3,11 @@ import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { budgetTotal } from "@/lib/plan";
+import { entranceBudget } from "@/lib/entrance";
 import { hallBudget } from "@/lib/hall";
 import { kitchenBudget } from "@/lib/kitchen";
 import { salesBudget } from "@/lib/sales";
+import { washroomBudget } from "@/lib/washroom";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -13,7 +15,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Rising Tech Solutions · Office restyle",
   description:
-    "No-reconstruction restyles for the Rising Tech Solutions founders office, halls, sales cabin, and kitchen.",
+    "No-reconstruction restyles for the Rising Tech Solutions entrance, washroom, founders office, halls, sales cabin, and kitchen.",
 };
 
 export default function Home() {
@@ -26,12 +28,12 @@ export default function Home() {
           Keep the walls · keep the cubicles
         </Badge>
         <h1 className="font-heading max-w-2xl text-4xl leading-[1.1] text-balance sm:text-5xl">
-          Four areas. Same company. Styling only.
+          Six areas. Same company. Styling only.
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
-          Rising Tech Solutions already has the blue walls, the glass, and the
-          furniture. These plans do not rebuild anything. Open a room, drag the
-          before/after sliders, and use the shopping list.
+          Rising Tech Solutions already has the blue walls, the glass, the door,
+          and the furniture. These plans do not rebuild anything. Open a room,
+          drag the before/after sliders, and use the shopping list.
         </p>
         <div className="mt-8">
           <Button asChild size="lg">
@@ -44,6 +46,54 @@ export default function Home() {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           <Link
+            href="/entrance"
+            className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
+          >
+            <Photo
+              src="/entrance/after-door.jpg"
+              alt="Entrance after restyle"
+              className="aspect-[4/3] w-full object-cover"
+              loading="eager"
+              fetchPriority="high"
+            />
+            <div className="p-5">
+              <p className="text-xs font-medium tracking-[0.18em] text-primary uppercase">
+                Front door · logo
+              </p>
+              <h2 className="font-heading mt-1 text-2xl group-hover:underline">
+                Entrance
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Same arched door and Rising Tech sign. Soft light, polished
+                hardware, scuffs gone. ${entranceBudget.min}–$
+                {entranceBudget.max}.
+              </p>
+            </div>
+          </Link>
+          <Link
+            href="/washroom"
+            className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
+          >
+            <Photo
+              src="/washroom/after-vanity.jpg"
+              alt="Washroom after restyle"
+              className="aspect-[4/3] w-full object-cover"
+              loading="eager"
+            />
+            <div className="p-5">
+              <p className="text-xs font-medium tracking-[0.18em] text-primary uppercase">
+                Vanity · guest washroom
+              </p>
+              <h2 className="font-heading mt-1 text-2xl group-hover:underline">
+                Washroom
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Same tiles and LED mirror. Ladder out, one soap, warm even
+                light. ${washroomBudget.min}–${washroomBudget.max}.
+              </p>
+            </div>
+          </Link>
+          <Link
             href="/sales"
             className="group overflow-hidden rounded-xl bg-white/80 ring-1 ring-foreground/10 transition-shadow hover:shadow-md"
           >
@@ -51,8 +101,6 @@ export default function Home() {
               src="/sales/after-blue.png"
               alt="Sales cabin after restyle"
               className="aspect-[4/3] w-full object-cover"
-              loading="eager"
-              fetchPriority="high"
             />
             <div className="p-5">
               <p className="text-xs font-medium tracking-[0.18em] text-primary uppercase">
