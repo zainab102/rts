@@ -77,7 +77,9 @@ async function readSidecarText(path) {
     for (const url of lines) {
       const res = await fetch(url);
       if (!res.ok) {
-        throw new Error(`sidecar fetch failed ${res.status} for ${path}: ${url}`);
+        throw new Error(
+          `sidecar fetch failed ${res.status} for ${path}: ${url}`,
+        );
       }
       parts.push((await res.text()).trim());
     }
@@ -91,6 +93,16 @@ async function readSidecarText(path) {
     return (await res.text()).trim();
   }
   return raw;
+}
+
+async function tryReadSidecarText(path) {
+  try {
+    return await readSidecarText(path);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(`skip sidecar ${path}: ${message}`);
+    return null;
+  }
 }
 
 async function exists(path) {
@@ -200,11 +212,14 @@ for (const [dest, parts] of groups) {
       console.log(`skip incomplete ${dest}`);
       continue;
     }
-    let encoded = (
-      await Promise.all(candidate.map((part) => readSidecarText(part)))
-    )
-      .join("")
-      .replace(/\s+/g, "");
+    const pieces = await Promise.all(
+      candidate.map((part) => tryReadSidecarText(part)),
+    );
+    if (pieces.some((piece) => piece == null)) {
+      console.log(`skip fetch error ${dest}`);
+      continue;
+    }
+    let encoded = pieces.join("").replace(/\s+/g, "");
     encoded = encoded.slice(0, encoded.length - (encoded.length % 4));
     const buf = Buffer.from(encoded, "base64");
     const score = photoScore(buf);
