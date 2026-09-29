@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       { source: "/hall/:file", headers: jpegHeaders },
       { source: "/kitchen/:file", headers: jpegHeaders },
       { source: "/sales/:file", headers: jpegHeaders },
+      { source: "/washroom/:file", headers: jpegHeaders },
+      { source: "/entrance/:file", headers: jpegHeaders },
     ];
   },
 };

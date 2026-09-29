@@ -1,6 +1,6 @@
 # Rising Tech Solutions — office restyle
 
-No-reconstruction plans for four areas: the **CEO / founders office**, the **main employee hall**, the **sales cabin**, and the **kitchen / washroom corridor**. Walls, glass, ceiling, floor, furniture, cubicle separators, and kitchen cabinets stay.
+No-reconstruction plans for six areas: the **entrance**, **washroom**, **CEO / founders office**, **main employee hall**, **sales cabin**, and **kitchen corridor**. Walls, glass, ceiling, floor, furniture, cubicle separators, kitchen cabinets, washroom tiles, and the front door stay.
 
 Repo: [github.com/zainab102/rts](https://github.com/zainab102/rts)
 
@@ -15,12 +15,14 @@ Open [http://127.0.0.1:43127](http://127.0.0.1:43127).
 
 ## Deploy
 
-Import this GitHub repository into Vercel. Use the Next.js defaults: `npm install` then `npm run build`. Photos are stored as `.b64` sidecars and restored into `public/` before the build.
+Import this GitHub repository into Vercel. Use the Next.js defaults: `npm install` then `npm run build`. Room photos are WebP files restored from `photos/` sidecars into `public/` before the build.
 
 ## Rooms
 
 | Room | What stays | Core spend |
 | --- | --- | --- |
+| [Entrance](/entrance) | Arched door, Rising Tech sign, biometric pad | about $120–$240 |
+| [Washroom](/washroom) | Tiles, vessel sink, LED mirror, toilet | about $95–$180 |
 | [Sales cabin](/sales) | Desk rows, privacy dividers, blinds, glass | about $380–$640 |
 | [Kitchen](/kitchen) | Cabinets, fridge, washroom doors, black cupboard | about $165–$310 |
 | [Main hall](/hall) | Cubicle separators (day teams + night sales), sofas, desks | about $490–$820 |

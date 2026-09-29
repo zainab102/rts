@@ -3,7 +3,15 @@ import { company } from "@/lib/plan";
 
 type SiteHeaderProps = {
   kicker?: string;
-  current?: "home" | "founders" | "hall" | "kitchen" | "sales" | "present";
+  current?:
+    | "home"
+    | "founders"
+    | "hall"
+    | "kitchen"
+    | "sales"
+    | "washroom"
+    | "entrance"
+    | "present";
 };
 
 export function SiteHeader({
@@ -40,6 +48,12 @@ export function SiteHeader({
           </Link>
           <Link href="/kitchen" className={linkClass("kitchen")}>
             Kitchen
+          </Link>
+          <Link href="/washroom" className={linkClass("washroom")}>
+            Washroom
+          </Link>
+          <Link href="/entrance" className={linkClass("entrance")}>
+            Entrance
           </Link>
         </nav>
       </div>
